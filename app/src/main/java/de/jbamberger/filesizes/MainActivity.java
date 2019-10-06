@@ -1,12 +1,15 @@
 package de.jbamberger.filesizes;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -18,6 +21,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.FileProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -137,10 +141,11 @@ public class MainActivity extends AppCompatActivity {
             }
 
             void bind(Item item) {
-                itemView.setOnClickListener(view -> selectItem(item));
+
                 this.fileName.setText(item.name);
 
                 if (item.type == ItemType.FOLDER) {
+                    this.itemView.setOnClickListener(view -> selectItem(item));
                     this.icon.setImageResource(R.drawable.ic_folder_24dp);
                     this.fileInfo.setText((item.children.size() == 0 ? "Empty | " : item.children.size() + " Files | ") + formatSize(item.totalSize));
                 } else {
@@ -150,6 +155,31 @@ public class MainActivity extends AppCompatActivity {
                         this.icon.setImageResource(R.drawable.ic_broken_image_24dp);
                     }
                     this.fileInfo.setText(formatSize(item.size));
+
+                    this.itemView.setOnClickListener(view -> {
+//                        Toast.makeText(view.getContext(), "Cannot open file.", Toast.LENGTH_SHORT).show();
+                        String mime = null;
+                        if (item.name.contains(".")) {
+                            String[] parts = item.name.split("\\.");
+                            String extension = parts[parts.length - 1];
+                            mime = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension);
+                        }
+                        if (mime == null) {
+                            mime = "*/*";
+                        }
+
+                        Uri uri = FileProvider.getUriForFile(
+                                itemView.getContext(),
+                                "de.jbamberger.filesizes.fileprovider",
+                                item.source);
+                        Intent intent = new Intent();
+                        intent.setAction(android.content.Intent.ACTION_VIEW);
+                        intent.setDataAndType(uri, mime);
+                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        view.getContext().startActivity(intent);
+                    });
+
+
                 }
                 spaceUsage.setMax(100);
                 if (item.parent == null) {
