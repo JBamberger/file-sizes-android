@@ -41,7 +41,20 @@ class FilesViewHolder extends RecyclerView.ViewHolder {
         if (item.type == ItemType.FOLDER) {
             this.itemView.setOnClickListener(view -> filesAdapter.selectItem(item));
             this.icon.setImageResource(R.drawable.ic_folder_24dp);
-            this.fileInfo.setText((item.children.size() == 0 ? "Empty | " : item.children.size() + " Files | ") + StringUtils.formatHRByteCount(item.totalSize, true));
+            StringBuilder details = new StringBuilder();
+            if (item.children.size() == 0) {
+                details.append("Empty");
+            } else {
+                details.append(item.children.size()).append(" Children");
+            }
+            details.append(" | ")
+                    .append(item.fileCount)
+                    .append(" Files, ")
+                    .append(item.folderCount)
+                    .append(" Folders")
+                    .append(" | ")
+                    .append(StringUtils.formatHRByteCount(item.totalSize, false));
+            this.fileInfo.setText(details.toString());
         } else {
             if (item.type == ItemType.FILE) {
                 this.icon.setImageResource(R.drawable.ic_file_24dp);
@@ -50,7 +63,7 @@ class FilesViewHolder extends RecyclerView.ViewHolder {
             } else {
                 this.icon.setImageResource(R.drawable.ic_broken_image_24dp);
             }
-            this.fileInfo.setText(StringUtils.formatHRByteCount(item.size, true));
+            this.fileInfo.setText(StringUtils.formatHRByteCount(item.size, false));
 
             this.itemView.setOnClickListener(view -> {
                 String mime = FileUtils.getMimeType(appContext, Uri.fromFile(item.source));
