@@ -4,10 +4,15 @@ import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.Settings;
+import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,11 +22,18 @@ import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
+import java.util.concurrent.Future;
+
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
 
+    ProgressBar progressBar;
+    TextView progressText;
+
     FilesAdapter adapter;
+    FileInfoProvider fileInfoProvider;
 
     @RequiresApi(Build.VERSION_CODES.M)
     private boolean hasPermission(String permission) {
@@ -32,6 +44,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        progressBar = findViewById(R.id.progressBar);
+        progressText = findViewById(R.id.progressText);
+        setProgress(true);
+
+        fileInfoProvider = ((FileSizeApp) this.getApplicationContext()).getResourceLocator()
+                .getFileInfoProvider();
 
         boolean hasStoragePermission = false;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -98,9 +117,19 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView rv = findViewById(R.id.list);
         rv.setLayoutManager(new LinearLayoutManager(this));
 
-        Item rootItem = new Item(null, Environment.getExternalStorageDirectory());
-        this.adapter = new FilesAdapter(getSupportActionBar(), rootItem);
-        rv.setAdapter(adapter);
+        File rootFile = Environment.getExternalStorageDirectory();
+        fileInfoProvider.loadInfo(rootFile, (rootItem) -> {
+            this.adapter = new FilesAdapter(getSupportActionBar(), rootItem);
+            rv.setAdapter(adapter);
+            setProgress(false);
+        });
+
+
     }
 
+    private void setProgress(boolean visible) {
+        int state = visible ? View.VISIBLE : View.GONE;
+        progressBar.setVisibility(state);
+        progressText.setVisibility(state);
+    }
 }
