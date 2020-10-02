@@ -64,10 +64,9 @@ public class FileSelectionFragment extends DialogFragment {
         @Override
         public void onBindViewHolder(@NonNull FileViewHolder holder, int position) {
             final File file = this.listing.get(position);
+            holder.icon.setImageResource(FileUtils.getIconForItem(FileUtils.getItemType(file)));
             holder.fileName.setText(file.toString());
-            holder.itemView.setOnClickListener(view -> {
-                fragment.selectFile(file);
-            });
+            holder.itemView.setOnClickListener(view -> fragment.selectFile(file));
         }
 
         @Override

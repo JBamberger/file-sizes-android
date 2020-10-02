@@ -3,7 +3,6 @@ package de.jbamberger.filesizes;
 import androidx.annotation.Nullable;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,21 +26,7 @@ public final class Item {
         this.name = source.getName();
         this.size = source.length();
 
-        ItemType t;
-        try {
-            if (FileUtils.isSymlink(source)) {
-                t = ItemType.SYM_LINK;
-            } else if (source.isFile()) {
-                t = ItemType.FILE;
-            } else if (source.isDirectory()) {
-                t = ItemType.FOLDER;
-            } else {
-                t = ItemType.OTHER;
-            }
-        } catch (IOException e) {
-            t = ItemType.OTHER;
-        }
-        this.type = t;
+        this.type = FileUtils.getItemType(source);
 
 
         if (this.type == ItemType.FOLDER) {
@@ -74,4 +59,5 @@ public final class Item {
             this.children = Collections.emptyList();
         }
     }
+
 }
