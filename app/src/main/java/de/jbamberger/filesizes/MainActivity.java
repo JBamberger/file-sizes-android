@@ -4,12 +4,12 @@ import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.Settings;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -24,9 +24,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
-import java.util.concurrent.Future;
-
-import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -90,6 +87,20 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         super.onBackPressed();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.select_root) {
+            FileSelectionFragment.newInstance().show(getSupportFragmentManager(), null);
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
