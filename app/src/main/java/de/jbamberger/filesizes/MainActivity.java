@@ -16,7 +16,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -32,11 +31,6 @@ public class MainActivity extends AppCompatActivity {
 
     FilesAdapter adapter;
     FileInfoProvider fileInfoProvider;
-
-    @RequiresApi(Build.VERSION_CODES.M)
-    private boolean hasPermission(String permission) {
-        return checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (hasPermission(Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            if (AndroidUtils.hasPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
                 hasStoragePermission = true;
             } else {
                 ActivityCompat.requestPermissions(this,
