@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/action_move_up"
+        android:icon="@drawable/ic_arrow_back_ios_24"
+        android:title="Move Up"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_select_file"
+        android:icon="@drawable/ic_check_24"
+        android:title="Select file"
+        app:showAsAction="ifRoom" />
+</menu>

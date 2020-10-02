@@ -1,9 +1,13 @@
 package de.jbamberger.filesizes;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.content.FileProvider;
 
 import java.io.File;
@@ -29,5 +33,10 @@ public class AndroidUtils {
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
         return intent;
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    static boolean hasPermission(ContextWrapper context, String permission) {
+        return context.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED;
     }
 }
