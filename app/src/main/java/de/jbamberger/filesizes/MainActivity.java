@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     ProgressBar progressBar;
     TextView progressText;
+    RecyclerView recyclerView;
 
     FilesAdapter adapter;
     FileInfoProvider fileInfoProvider;
@@ -42,6 +43,9 @@ public class MainActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progressBar);
         progressText = findViewById(R.id.progressText);
         setProgress(true);
+
+        recyclerView = findViewById(R.id.list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         fileInfoProvider = ((FileSizeApp) this.getApplicationContext()).getResourceLocator()
                 .getFileInfoProvider();
@@ -92,7 +96,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.select_root) {
-            FileSelectionFragment.newInstance().show(getSupportFragmentManager(), null);
+            FileSelectionFragment selection = FileSelectionFragment.newInstance();
+            selection.setSelectedListener(this::setRootDirectory);
+            selection.show(getSupportFragmentManager(), null);
         }
         return super.onOptionsItemSelected(item);
     }
@@ -122,17 +128,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
-        RecyclerView rv = findViewById(R.id.list);
-        rv.setLayoutManager(new LinearLayoutManager(this));
-
         File rootFile = Environment.getExternalStorageDirectory();
+        setRootDirectory(rootFile);
+    }
+
+    private void setRootDirectory(File rootFile) {
         fileInfoProvider.loadInfo(rootFile, (rootItem) -> {
             this.adapter = new FilesAdapter(getSupportActionBar(), rootItem);
-            rv.setAdapter(adapter);
+            recyclerView.setAdapter(adapter);
             setProgress(false);
         });
-
-
     }
 
     private void setProgress(boolean visible) {

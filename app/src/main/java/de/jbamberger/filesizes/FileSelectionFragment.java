@@ -22,8 +22,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 public class FileSelectionFragment extends DialogFragment {
+
+    public interface OnItemSelectedListener {
+        void onItemSelected(File file);
+    }
 
     private static class FileViewHolder extends RecyclerView.ViewHolder {
         LinearLayout itemView;
@@ -64,7 +69,8 @@ public class FileSelectionFragment extends DialogFragment {
         @Override
         public void onBindViewHolder(@NonNull FileViewHolder holder, int position) {
             final File file = this.listing.get(position);
-            holder.icon.setImageResource(FileUtils.getIconForItem(FileUtils.getItemType(file)));
+            final ItemType itemType = FileUtils.getItemType(file);
+            holder.icon.setImageResource(FileUtils.getIconForItem(itemType));
             holder.fileName.setText(file.toString());
             holder.itemView.setOnClickListener(view -> fragment.selectFile(file));
         }
@@ -78,6 +84,11 @@ public class FileSelectionFragment extends DialogFragment {
     private FilesAdapter adapter = new FilesAdapter(this);
     private FileSelectionViewModel viewModel;
     private Toolbar toolbar;
+
+    @Nullable
+    private File selectedFile;
+    @Nullable
+    private OnItemSelectedListener selectedListener;
 
     public static FileSelectionFragment newInstance() {
         return new FileSelectionFragment();
@@ -100,8 +111,11 @@ public class FileSelectionFragment extends DialogFragment {
                     return true;
                 }
                 case R.id.action_select_file: {
-                    Toast.makeText(view.getContext(), "Selected file", Toast.LENGTH_LONG).show();
-                    // TODO: implement properly
+                    if (selectedListener != null && selectedFile != null) {
+//                        toolbar.getMenu().findItem(R.id.action_select_file).setEnabled(false);
+                        selectedListener.onItemSelected(selectedFile);
+                        this.dismiss();
+                    }
                     return true;
                 }
                 default:
@@ -111,6 +125,7 @@ public class FileSelectionFragment extends DialogFragment {
         final RecyclerView fileList = view.findViewById(R.id.file_list);
         fileList.setLayoutManager(new LinearLayoutManager(view.getContext()));
         fileList.setAdapter(adapter);
+        selectedFile = null;
 
         super.onViewCreated(view, savedInstanceState);
     }
@@ -122,6 +137,7 @@ public class FileSelectionFragment extends DialogFragment {
 
         viewModel.getFiles().observe(getViewLifecycleOwner(), (dirListing) -> {
             if (dirListing != null) {
+                selectedFile = dirListing.directory;
                 adapter.setListing(dirListing.children);
                 toolbar.setSubtitle(dirListing.directory.toString());
             } else {
@@ -143,8 +159,11 @@ public class FileSelectionFragment extends DialogFragment {
         if (file.isDirectory()) {
             viewModel.selectFile(file);
         } else {
-            // TODO
+            selectedFile = file;
         }
     }
 
+    public void setSelectedListener(@Nullable OnItemSelectedListener selectedListener) {
+        this.selectedListener = selectedListener;
+    }
 }
