@@ -4,12 +4,12 @@
     <color name="color_primary_variant">#003d33</color>
     <color name="color_secondary">#aed581</color>
     <color name="color_secondary_variant">#e1ffb1</color>
-    <color name="color_background">#FFFFFF</color>
-    <color name="color_surface">#FFFFFF</color>
-    <color name="color_error">#B00020</color>
+    <color name="color_background">#000000</color>
+    <color name="color_surface">#000000</color>
+    <color name="color_error">#CF6679</color>
     <color name="color_on_primary">#FFFFFF</color>
     <color name="color_on_secondary">#000000</color>
-    <color name="color_on_background">#000000</color>
-    <color name="color_on_surface">#000000</color>
-    <color name="color_on_error">#FFFFFF</color>
+    <color name="color_on_background">#FFFFFF</color>
+    <color name="color_on_surface">#FFFFFF</color>
+    <color name="color_on_error">#000000</color>
 </resources>
