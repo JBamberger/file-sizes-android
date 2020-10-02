@@ -24,12 +24,28 @@ public class FileSelectionViewModel extends ViewModel {
     }
 
     private final MutableLiveData<DirectoryListing> files = new MutableLiveData<>(null);
+    private File state;
+
+    public FileSelectionViewModel() {
+        state = null;
+    }
 
     void selectFile(File file) {
+        state = file;
         File[] children = file.listFiles();
         List<File> childList = children != null ? Arrays.asList(children) : Collections.emptyList();
 
         files.postValue(new DirectoryListing(file, childList));
+    }
+
+    void navigateUp() {
+        if (state == null) {
+            state = new File("/");
+        }
+        File nextState = state.getParentFile();
+        if (nextState != null) {
+            selectFile(nextState);
+        }
     }
 
     LiveData<DirectoryListing> getFiles() {

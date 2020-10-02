@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -92,6 +93,22 @@ public class FileSelectionFragment extends DialogFragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         this.toolbar = view.findViewById(R.id.toolbar);
+        this.toolbar.inflateMenu(R.menu.file_selection_menu);
+        this.toolbar.setOnMenuItemClickListener((menuItem) -> {
+            switch (menuItem.getItemId()) {
+                case R.id.action_move_up: {
+                    viewModel.navigateUp();
+                    return true;
+                }
+                case R.id.action_select_file: {
+                    Toast.makeText(view.getContext(), "Selected file", Toast.LENGTH_LONG).show();
+                    // TODO: implement properly
+                    return true;
+                }
+                default:
+                    return false;
+            }
+        });
         final RecyclerView fileList = view.findViewById(R.id.file_list);
         fileList.setLayoutManager(new LinearLayoutManager(view.getContext()));
         fileList.setAdapter(adapter);
