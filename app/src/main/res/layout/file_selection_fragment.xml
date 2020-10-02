@@ -8,17 +8,18 @@
     tools:context=".FileSelectionFragment">
 
     <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:theme="@style/AppTheme.AppBarOverlay"
         app:popupTheme="@style/AppTheme.PopupOverlay"
-        app:subtitle="This/is/a/file/path"
-        app:title="Hello world" />
+        app:title="Select a file"
+        tools:subtitle="This/is/a/file/path" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/file_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:listitem="@layout/file" />
+        tools:listitem="@layout/filelist_item" />
 </LinearLayout>

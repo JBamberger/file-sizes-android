@@ -6,11 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.DialogFragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -24,19 +25,15 @@ import java.util.List;
 public class FileSelectionFragment extends DialogFragment {
 
     private static class FileViewHolder extends RecyclerView.ViewHolder {
-        ConstraintLayout itemView;
+        LinearLayout itemView;
         TextView fileName;
-        TextView fileInfo;
         ImageView icon;
-        ProgressBar spaceUsage;
 
-        public FileViewHolder(@NonNull ConstraintLayout itemView) {
+        public FileViewHolder(@NonNull LinearLayout itemView) {
             super(itemView);
             this.itemView = itemView;
             this.fileName = itemView.findViewById(R.id.file_name);
-            this.fileInfo = itemView.findViewById(R.id.file_info);
             this.icon = itemView.findViewById(R.id.file_icon);
-            this.spaceUsage = itemView.findViewById(R.id.space_usage);
         }
     }
 
@@ -58,8 +55,8 @@ public class FileSelectionFragment extends DialogFragment {
         @NonNull
         @Override
         public FileViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            ConstraintLayout layout = (ConstraintLayout) LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.file, parent, false);
+            LinearLayout layout = (LinearLayout) LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.filelist_item, parent, false);
             return new FileViewHolder(layout);
         }
 
@@ -80,6 +77,7 @@ public class FileSelectionFragment extends DialogFragment {
 
     private FilesAdapter adapter = new FilesAdapter(this);
     private FileSelectionViewModel viewModel;
+    private Toolbar toolbar;
 
     public static FileSelectionFragment newInstance() {
         return new FileSelectionFragment();
@@ -93,6 +91,7 @@ public class FileSelectionFragment extends DialogFragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        this.toolbar = view.findViewById(R.id.toolbar);
         final RecyclerView fileList = view.findViewById(R.id.file_list);
         fileList.setLayoutManager(new LinearLayoutManager(view.getContext()));
         fileList.setAdapter(adapter);
@@ -108,8 +107,7 @@ public class FileSelectionFragment extends DialogFragment {
         viewModel.getFiles().observe(getViewLifecycleOwner(), (dirListing) -> {
             if (dirListing != null) {
                 adapter.setListing(dirListing.children);
-                // TODO: show current dir in titlebar or similar
-
+                toolbar.setSubtitle(dirListing.directory.toString());
             } else {
                 adapter.setListing(Collections.emptyList());
             }

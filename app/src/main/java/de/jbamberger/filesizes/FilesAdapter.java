@@ -22,7 +22,7 @@ class FilesAdapter extends RecyclerView.Adapter<FilesViewHolder> {
     @Override
     public FilesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ConstraintLayout layout = (ConstraintLayout) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.file, parent, false);
+                .inflate(R.layout.filesize_item, parent, false);
 
         return new FilesViewHolder(this, layout);
     }
